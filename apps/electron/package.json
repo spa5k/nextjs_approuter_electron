@@ -1,0 +1,57 @@
+{
+  "name": "@nextelectron/electron",
+  "version": "0.0.1",
+  "main": "main/src/main.js",
+  "author": {
+    "name": "Nextjs.com",
+    "email": "nextjs@gmail.com"
+  },
+  "homepage": "https://quran.com",
+  "scripts": {
+    "dist": "electron-builder --dir",
+    "postinstall": "electron-builder install-app-deps",
+    "start": "NODE_ENV=development electron .",
+    "build": "swc ./src -d main",
+    "build:dev": "swc ./src -d main --watch",
+    "dev": "npm-run-all --parallel build:dev electron:dev",
+    "electron:dev": "cross-env NODE_ENV='development' nodemon",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "cross-env": "^7.0.3",
+    "get-port-please": "^3.1.2",
+    "next": "^14.2.3"
+  },
+  "devDependencies": {
+    "@swc/cli": "^0.3.12",
+    "@swc/core": "^1.5.5",
+    "electron": "^30.0.2",
+    "electron-builder": "^24.13.3",
+    "nodemon": "^3.1.0",
+    "npm-run-all": "^4.1.5"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "build": {
+    "asar": true,
+    "executableName": "NextJSElectron",
+    "files": [
+      "main"
+    ],
+    "extraFiles": [
+      {
+        "from": "../web/.next/standalone/apps/web",
+        "to": "web"
+      },
+      {
+        "from": "../web/.next/static",
+        "to": "web/.next/static"
+      },
+      {
+        "from": "../web/public",
+        "to": "web/public"
+      }
+    ]
+  }
+}

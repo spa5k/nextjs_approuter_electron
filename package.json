@@ -1,0 +1,26 @@
+{
+  "name": "nextelectron",
+  "private": true,
+  "author": "Spa5k",
+  "description": "NextElectron is a monorepo template for building Electron apps with Next.js.",
+  "version": "0.0.1",
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "format": "dprint fmt",
+    "electron": "pnpm --filter=./apps/electron",
+    "web": "pnpm --filter=./apps/web"
+  },
+  "devDependencies": {
+    "@nextelectron/eslint-config": "workspace:^",
+    "@nextelectron/typescript-config": "workspace:^",
+    "dprint": "^0.45.1",
+    "turbo": "latest"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {},
+  "packageManager": "pnpm@9.1.0"
+}
