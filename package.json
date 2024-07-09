@@ -9,12 +9,10 @@
     "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "dprint fmt",
-    "electron": "pnpm --filter=./apps/electron",
-    "web": "pnpm --filter=./apps/web"
+    "electron": "pnpm --filter=./electron",
+    "web": "pnpm --filter=./web"
   },
   "devDependencies": {
-    "@nextelectron/eslint-config": "workspace:^",
-    "@nextelectron/typescript-config": "workspace:^",
     "dprint": "^0.45.1",
     "turbo": "latest"
   },

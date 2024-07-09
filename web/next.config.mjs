@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
-module.exports = {
-  transpilePackages: ["@nextelectron/ui"],
+const nextConfig = {
   output: "standalone",
 };
+
+export default nextConfig;

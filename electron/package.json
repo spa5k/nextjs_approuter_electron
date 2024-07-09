@@ -3,10 +3,8 @@
   "version": "0.0.1",
   "main": "main/src/main.js",
   "author": {
-    "name": "Nextjs.com",
-    "email": "nextjs@gmail.com"
+    "name": "saybackend.com"
   },
-  "homepage": "https://quran.com",
   "scripts": {
     "dist": "electron-builder --dir",
     "postinstall": "electron-builder install-app-deps",
@@ -41,7 +39,7 @@
     ],
     "extraFiles": [
       {
-        "from": "../web/.next/standalone/apps/web",
+        "from": "../web/.next/standalone/web",
         "to": "web"
       },
       {

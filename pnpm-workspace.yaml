@@ -1,5 +1,3 @@
 packages:
-  - 'apps/**'
-  - 'packages/**'
-  - 'libs/**'
-  
+  - "electron"
+  - "web"
