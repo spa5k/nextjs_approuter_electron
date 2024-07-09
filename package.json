@@ -9,16 +9,12 @@
   "description": "NextElectron is a monorepo template for building Electron apps with Next.js.",
   "version": "0.0.1",
   "scripts": {
-    "build": "turbo build",
-    "dev": "turbo dev",
-    "lint": "turbo lint",
     "format": "dprint fmt",
     "electron": "pnpm --filter=./electron",
     "web": "pnpm --filter=./web"
   },
   "devDependencies": {
-    "dprint": "^0.47.1",
-    "turbo": "latest"
+    "dprint": "^0.47.1"
   },
   "engines": {
     "node": ">=18"
