@@ -1,40 +1,69 @@
-import { app, BrowserWindow } from "electron";
+import { is } from "@electron-toolkit/utils";
+import { app, BrowserWindow, ipcMain } from "electron";
 import { getPort } from "get-port-please";
 import { startServer } from "next/dist/server/lib/start-server";
-import * as path from "path";
+import { dirname, join } from "path";
 
-let win: BrowserWindow;
+const createWindow = () => {
+  const mainWindow = new BrowserWindow({
+    width: 900,
+    height: 670,
+    webPreferences: {
+      preload: join(__dirname, "preload.js"),
+      nodeIntegration: true,
+    },
+  });
+  mainWindow.on("ready-to-show", () => mainWindow.show());
 
-app.on("ready", async () => {
-  win = new BrowserWindow({ width: 800, height: 600 });
-  const nextJSPort = 3000;
-  let url = `http://localhost:${nextJSPort}/`;
-
-  if (process.env.NODE_ENV !== "development") {
-    const nextJSPort = await getPort({ portRange: [30_011, 50_000] });
-    const webDir = path.join(path.dirname(path.dirname(app.getAppPath())), "web");
-
-    try {
-      await startServer({
-        dir: webDir,
-        isDev: false,
-        hostname: "localhost",
-        port: nextJSPort,
-        customServer: true,
-        allowRetry: false,
-      });
-      url = `http://localhost:${nextJSPort}/`;
-    } catch (err) {
-      console.error(err);
-      process.exit(1);
+  const loadURL = async () => {
+    if (is.dev) {
+      mainWindow.loadURL("http://localhost:3000");
+    } else {
+      try {
+        const port = await startNextJSServer();
+        console.log("Next.js server started on port:", port);
+        mainWindow.loadURL(`http://localhost:${port}`);
+      } catch (error) {
+        console.error("Error starting Next.js server:", error);
+      }
     }
+  };
+
+  loadURL();
+  return mainWindow;
+};
+
+const startNextJSServer = async () => {
+  try {
+    const nextJSPort = await getPort({ portRange: [30_011, 50_000] });
+    const webDir = join(dirname(dirname(app.getAppPath())), "web");
+    await startServer({
+      dir: webDir,
+      isDev: false,
+      hostname: "localhost",
+      port: nextJSPort,
+      customServer: true,
+      allowRetry: false,
+      keepAliveTimeout: 5000,
+      minimalMode: true,
+    });
+
+    return nextJSPort;
+  } catch (error) {
+    console.error("Error starting Next.js server:", error);
+    throw error;
   }
+};
 
-  win.loadURL(url);
-  win.show();
+app.whenReady().then(() => {
+  createWindow();
 
-  win.webContents.openDevTools();
+  ipcMain.on("ping", () => console.log("pong"));
+  app.on("activate", () => {
+    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  });
 });
 
-// Quit the app once all windows are closed
-app.on("window-all-closed", app.quit);
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") app.quit();
+});

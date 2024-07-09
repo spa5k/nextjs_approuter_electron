@@ -14,7 +14,20 @@ export function ElectronCheck(): JSX.Element {
 
   return (
     <div>
-      Is Electron {isElectron ? "Yes" : "No"}
+      Is Electron - {isElectron ? "Yes" : "No"}
+
+      <br />
+
+      {isElectron && (
+        <button
+          style={{ padding: "10px", margin: "10px", backgroundColor: "blue", color: "white" }}
+          onClick={() => {
+            window.electron.ipcRenderer.send("ping");
+          }}
+        >
+          Ping Electron
+        </button>
+      )}
     </div>
   );
 }

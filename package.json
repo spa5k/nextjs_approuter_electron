@@ -1,7 +1,11 @@
 {
   "name": "nextelectron",
   "private": true,
-  "author": "Spa5k",
+  "author": {
+    "name": "spa5k",
+    "email": "admin@saybackend.com",
+    "url": "https://saybackend.com"
+  },
   "description": "NextElectron is a monorepo template for building Electron apps with Next.js.",
   "version": "0.0.1",
   "scripts": {
@@ -13,12 +17,12 @@
     "web": "pnpm --filter=./web"
   },
   "devDependencies": {
-    "dprint": "^0.45.1",
+    "dprint": "^0.47.1",
     "turbo": "latest"
   },
   "engines": {
     "node": ">=18"
   },
   "dependencies": {},
-  "packageManager": "pnpm@9.1.0"
+  "packageManager": "pnpm@9.5.0"
 }
