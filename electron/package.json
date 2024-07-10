@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@electron-toolkit/utils": "^3.0.0",
+    "@next/env": "^14.2.5",
     "cross-env": "^7.0.3",
     "get-port-please": "^3.1.2",
     "next": "^14.2.4"

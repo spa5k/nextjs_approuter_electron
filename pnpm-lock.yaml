@@ -17,6 +17,9 @@ importers:
       '@electron-toolkit/utils':
         specifier: ^3.0.0
         version: 3.0.0(electron@31.1.0)
+      '@next/env':
+        specifier: ^14.2.5
+        version: 14.2.5
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
@@ -373,6 +376,9 @@ packages:
 
   '@next/env@14.2.4':
     resolution: {integrity: sha512-3EtkY5VDkuV2+lNmKlbkibIJxcO4oIHEhBWne6PaAp+76J9KoSsGvNikp6ivzAT8dhhBMYrm6op2pS1ApG0Hzg==}
+
+  '@next/env@14.2.5':
+    resolution: {integrity: sha512-/zZGkrTOsraVfYjGP8uM0p6r0BDT6xWpkjdVbcz66PJVSpwXX3yNiRycxAuDfBKGWBrZBXRuK/YVlkNgxHGwmA==}
 
   '@next/eslint-plugin-next@14.2.4':
     resolution: {integrity: sha512-svSFxW9f3xDaZA3idQmlFw7SusOuWTpDTAeBlO3AEPDltrraV+lqs7mAc6A27YdnpQVVIA3sODqUAAHdWhVWsA==}
@@ -3148,6 +3154,8 @@ snapshots:
       - supports-color
 
   '@next/env@14.2.4': {}
+
+  '@next/env@14.2.5': {}
 
   '@next/eslint-plugin-next@14.2.4':
     dependencies:
