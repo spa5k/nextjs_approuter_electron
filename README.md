@@ -22,23 +22,34 @@ This will give us a minimal bundle, which we can use in Electron. Not only that,
 "build": {
   "asar": true,
   "executableName": "NextJSElectron",
-  "files": [
-    "main"
+  "appId": "com.saybackend.nextjs-electron",
+  "asarUnpack": [
+    "node_modules/next",
+    "node_modules/@img",
+    "node_modules/sharp"
   ],
-  "extraFiles": [
+  "files": [
+    "build",
     {
-      "from": "../web/.next/standalone/apps/web",
-      "to": "web"
-    },
-    {
-      "from": "../web/.next/static",
-      "to": "web/.next/static"
-    },
-    {
-      "from": "../web/public",
-      "to": "web/public"
+      "from": "web",
+      "to": "app",
+      "filter": [
+        "!**/.env",
+        "!**/package.json"
+      ]
     }
-  ]
+  ],
+  "win": {
+    "target": [
+      "nsis"
+    ]
+  },
+  "linux": {
+    "target": [
+      "deb"
+    ],
+    "category": "Development"
+  }
 }
 ```
 
@@ -57,7 +68,7 @@ let win: BrowserWindow;
 app.on("ready", async () => {
   const nextJSPort = await getPort({ portRange: [30_011, 50_000] });
   const url = `http://localhost:${nextJSPort}/`;
-  const webDir = path.join(path.dirname(path.dirname(app.getAppPath())), "web");
+  const webDir = join(app.getAppPath(), "app");
 
   try {
     await startServer({
@@ -85,13 +96,14 @@ You can use get-port-please to get a free port, and then start the NextJS server
 3. In order to run the application, you can use the following commands -
 
 ```bash
-make dev
+make web dev
+make electron dev
 ```
 
 4. To build the electron app, you can use the following command -
 
 ```bash
-make bundle
+make electron-dist
 ```
 
 > Note: Electron expects that you have already created production output of the NextJS app, which is copied to the electron app. So, make sure you have run `make build` in the NextJS app before running the electron app.
