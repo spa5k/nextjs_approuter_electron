@@ -2,7 +2,7 @@ import { is } from "@electron-toolkit/utils";
 import { app, BrowserWindow, ipcMain } from "electron";
 import { getPort } from "get-port-please";
 import { startServer } from "next/dist/server/lib/start-server";
-import { dirname, join } from "path";
+import { join } from "path";
 
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
@@ -15,12 +15,7 @@ const createWindow = () => {
   });
 
   mainWindow.on("ready-to-show", () => mainWindow.show());
-  console.log("----------------------------------------------------------");
 
-  const webDir = join(dirname(app.getAppPath()), "web");
-
-  console.log(webDir);
-  console.log("----------------------------------------------------------");
   const loadURL = async () => {
     if (is.dev) {
       mainWindow.loadURL("http://localhost:3000");
@@ -42,12 +37,8 @@ const createWindow = () => {
 const startNextJSServer = async () => {
   try {
     const nextJSPort = await getPort({ portRange: [30_011, 50_000] });
-    const webDir = join(dirname(dirname(app.getAppPath())), "web");
-    console.log("Starting Next.js server on port:", nextJSPort);
-    console.log("----------------------------------------------------------");
+    const webDir = join(app.getAppPath(), "app");
 
-    console.log(webDir);
-    console.log("----------------------------------------------------------");
     await startServer({
       dir: webDir,
       isDev: false,
