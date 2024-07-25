@@ -1,109 +1,258 @@
-# NextJS App Router with Electron, SSR, Server Components etc
+# NextJS App Router with Electron, SSR, Server Components, etc.
 
-This boilerplate shows the turborepo setup for NextJS alongside Electron, so that you can use same codebase, with SSR (no export or static drama) for Electron.
+This boilerplate demonstrates a turborepo setup combining Next.js with Electron, allowing you to use the same codebase with SSR (Server-Side Rendering)/ React Server Components(RSC) for Electron applications.
 
-1. NextJS App - `apps/web`
-   For the NextJS, we needed to make few changes to the config, set the output to "standalone"
+## Project Structure
 
-```diff
-/** @type {import('next').NextConfig} */
-module.exports = {
-  transpilePackages: ["@nextelectron/ui"],
-+ output: "standalone",
-};
-```
+1. **Next.js App** - `next.config.mjs`
+   - For the Next.js app, configure it by setting the output to "standalone":
+     ```diff
+     /** @type {import('next').NextConfig} */
+     module.exports = {
+       transpilePackages: ["@nextelectron/ui"],
+     + output: "standalone",
+     };
+     ```
+   - This configuration produces a minimal bundle usable in Electron. Additionally, this output can be utilized in a Dockerfile to create a containerized version of your app, which is small in size and can run anywhere, not just Vercel.
 
-This will give us a minimal bundle, which we can use in Electron. Not only that, you can also use this output in your Dockerfile to create a containerized version of your app. Which is small in size, and can run anywhere, not just vercel.
+2. **Electron App** - `package.json`
+   - The Electron app uses the Next.js app as the renderer, relying on stock Electron without external libraries.
+   - Electron `build` configuration in `package.json`:
+     ```json
+     "build": {
+       "asar": true,
+       "executableName": "NextJSElectron",
+       "appId": "com.saybackend.nextjs-electron",
+       "asarUnpack": [
+         "node_modules/next",
+         "node_modules/@img",
+         "node_modules/sharp",
+         "**\\*.{node,dll}"
+       ],
+       "files": [
+         "build",
+         {
+           "from": ".next/standalone",
+           "to": "app",
+           "filter": [
+             "!**/.env",
+             "!**/package.json"
+           ]
+         },
+         {
+           "from": ".next/static",
+           "to": "app/.next/static"
+         },
+         {
+           "from": "public",
+           "to": "app/public"
+         }
+       ],
+       "win": {
+         "target": [
+           "nsis"
+         ]
+       },
+       "linux": {
+         "target": [
+           "deb"
+         ],
+         "category": "Development"
+       }
+     }
+     ```
+   - The Next.js app output is copied to the Electron app to be used as the renderer during the build process.
+   - Main Electron file (`main.ts`):
+     ```ts
+     import { is } from "@electron-toolkit/utils";
+     import { app, BrowserWindow, ipcMain } from "electron";
+     import { getPort } from "get-port-please";
+     import { startServer } from "next/dist/server/lib/start-server";
+     import { join } from "path";
 
-2. Electron App - `apps/electron`
-   This is the electron app, which uses the NextJS app as the renderer. We won't be using any external library, it's stock Electron.
+     const createWindow = () => {
+       const mainWindow = new BrowserWindow({
+         width: 900,
+         height: 670,
+         webPreferences: {
+           preload: join(__dirname, "preload.js"),
+           nodeIntegration: true,
+         },
+       });
 
-```json
-"build": {
-  "asar": true,
-  "executableName": "NextJSElectron",
-  "appId": "com.saybackend.nextjs-electron",
-  "asarUnpack": [
-    "node_modules/next",
-    "node_modules/@img",
-    "node_modules/sharp"
-  ],
-  "files": [
-    "build",
-    {
-      "from": "web",
-      "to": "app",
-      "filter": [
-        "!**/.env",
-        "!**/package.json"
-      ]
-    }
-  ],
-  "win": {
-    "target": [
-      "nsis"
-    ]
-  },
-  "linux": {
-    "target": [
-      "deb"
-    ],
-    "category": "Development"
-  }
-}
-```
+       mainWindow.on("ready-to-show", () => mainWindow.show());
 
-As you can see, we are copying the NextJS app output to the electron app, so that it can be used as the renderer.
+       const loadURL = async () => {
+         if (is.dev) {
+           mainWindow.loadURL("http://localhost:3000");
+         } else {
+           try {
+             const port = await startNextJSServer();
+             console.log("Next.js server started on port:", port);
+             mainWindow.loadURL(`http://localhost:${port}`);
+           } catch (error) {
+             console.error("Error starting Next.js server:", error);
+           }
+         }
+       };
 
-For the main.ts file of electron, this is how you are gonna set it up -
+       loadURL();
+       return mainWindow;
+     };
 
-```ts
-import { app, BrowserWindow } from "electron";
-import { getPort } from "get-port-please";
-import { startServer } from "next/dist/server/lib/start-server";
-import * as path from "path";
+     const startNextJSServer = async () => {
+       try {
+         const nextJSPort = await getPort({ portRange: [30_011, 50_000] });
+         const webDir = join(app.getAppPath(), "app");
 
-let win: BrowserWindow;
+         await startServer({
+           dir: webDir,
+           isDev: false,
+           hostname: "localhost",
+           port: nextJSPort,
+           customServer: true,
+           allowRetry: false,
+           keepAliveTimeout: 5000,
+           minimalMode: true,
+         });
 
-app.on("ready", async () => {
-  const nextJSPort = await getPort({ portRange: [30_011, 50_000] });
-  const url = `http://localhost:${nextJSPort}/`;
-  const webDir = join(app.getAppPath(), "app");
+         return nextJSPort;
+       } catch (error) {
+         console.error("Error starting Next.js server:", error);
+         throw error;
+       }
+     };
 
-  try {
-    await startServer({
-      dir: webDir,
-      isDev: false,
-      hostname: "localhost",
-      port: nextJSPort,
-      customServer: true,
-      allowRetry: false,
-    });
-    url = `http://localhost:${nextJSPort}/`;
-  } catch (err) {
-    console.error(err);
-    process.exit(1);
-  }
-  win.loadURL(url);
-  win.show();
-});
-```
+     app.whenReady().then(() => {
+       createWindow();
 
-It's not same as other electron setups, where we point to index.html, instead we are pointing to the NextJS app, which is running on a different port. This is how we can use SSR in Electron.
+       ipcMain.on("ping", () => console.log("pong"));
+       app.on("activate", () => {
+         if (BrowserWindow.getAllWindows().length === 0) createWindow();
+       });
+     });
 
-You can use get-port-please to get a free port, and then start the NextJS server on that port. This way, you can use the same codebase for both web and electron.
+     app.on("window-all-closed", () => {
+       if (process.platform !== "darwin") app.quit();
+     });
+     ```
+   - Unlike traditional Electron setups where `index.html` is loaded, this setup runs the Next.js app on a different port and loads it, enabling SSR in Electron.
+   - `get-port-please` is used to get a free port, starting the Next.js server on that port. This allows the same codebase to be used for both web and Electron.
 
-3. In order to run the application, you can use the following commands -
+## Running the Application
+
+To run the application, use the following commands:
 
 ```bash
-make web dev
-make electron dev
+make next_dev
+make electron_dev
 ```
 
-4. To build the electron app, you can use the following command -
+To build the Electron app:
 
 ```bash
-make electron-dist
+make electron_dist
 ```
 
-> Note: Electron expects that you have already created production output of the NextJS app, which is copied to the electron app. So, make sure you have run `make build` in the NextJS app before running the electron app.
+> **Note**: Electron expects the Next.js app's production output to be present and copied to the Electron app. Ensure you have built the Next.js app before running the Electron app.
+
+## Makefile
+
+### Next.js Tasks
+
+- **Development Server**: Starts the development server for Next.js.
+  ```sh
+  make next_dev
+  ```
+
+- **Build**: Builds the Next.js project for production.
+  ```sh
+  make next_build
+  ```
+
+- **Start**: Starts the Next.js project.
+  ```sh
+  make next_start
+  ```
+
+- **Lint**: Lints the Next.js project.
+  ```sh
+  make next_lint
+  ```
+
+### Code Formatting
+
+- **Format Code**: Formats the codebase using `dprint`.
+  ```sh
+  make format
+  ```
+
+### Electron Tasks
+
+- **Postinstall**: Installs app dependencies for Electron.
+  ```sh
+  make postinstall
+  ```
+
+- **Build for Distribution**: Builds Electron for distribution in directory mode.
+  ```sh
+  make electron_dist
+  ```
+
+- **Build for Debian Distribution**: Builds Electron for Debian distribution.
+  ```sh
+  make electron_dist_deb
+  ```
+
+- **Build Using tsup**: Builds Electron using `tsup`.
+  ```sh
+  make electron_build
+  ```
+
+- **Watch Mode**: Watch mode for Electron with `tsup`.
+  ```sh
+  make electron_build_watch
+  ```
+
+- **Development Mode**: Starts development mode for Electron.
+  ```sh
+  make electron_dev
+  ```
+
+### Composite Tasks
+
+- **Build All**: Builds both Next.js and Electron projects.
+  ```sh
+  make build
+  ```
+
+- **Distribute All**: Distributes both Next.js and Electron projects.
+  ```sh
+  make dist
+  ```
+
+- **Development Mode for All**: Starts development mode for both Electron and Next.js.
+  ```sh
+  make dev
+  ```
+
+### Usage
+
+To use any of the tasks, simply run the corresponding `make` command in your terminal. For example, to start the development server for Next.js, you would run:
+
+```sh
+make next_dev
+```
+
+For a list of all available tasks, you can run:
+
+```sh
+make help
+```
+
+This will display a summary of all tasks and their descriptions.
+
+## Additional Information
+
+- Ensure all dependencies are installed using `pnpm` before running the tasks.
+- The tasks are defined in the `Makefile` for ease of use and to maintain consistency across development and build processes.

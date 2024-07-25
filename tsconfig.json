@@ -29,10 +29,10 @@
   },
   "include": [
     "next-env.d.ts",
+    "electron.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts",
-    "electron.d.ts"
+    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

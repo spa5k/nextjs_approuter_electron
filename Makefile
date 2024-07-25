@@ -1,97 +1,69 @@
-# Root-level scripts
-.PHONY: help format electron web
+# Define commands for each task
+.PHONY: next_dev next_build next_start next_lint format postinstall electron_dist electron_dist_deb electron_build build dist dev electron_build_watch electron_dev
 
-help:
-	@echo "Available commands:"
-	@echo ""
-	@echo "Root-level scripts:"
-	@echo "  make format              - Format code using dprint"
-	@echo "  make electron            - Run pnpm in the electron directory"
-	@echo "  make web                 - Run pnpm in the web directory"
-	@echo ""
-	@echo "Web scripts:"
-	@echo "  make web-dev             - Start the web development server"
-	@echo "  make web-build           - Build the web application"
-	@echo "  make web-start           - Start the web application"
-	@echo "  make web-lint            - Lint the web application"
-	@echo ""
-	@echo "Electron scripts:"
-	@echo "  make electron-clean      - Clean the electron build"
-	@echo "  make electron-copy       - Copy web build to electron"
-	@echo "  make electron-prepare    - Prepare the electron build"
-	@echo "  make electron-dist       - Build electron distribution"
-	@echo "  make electron-linux      - Build electron for Linux"
-	@echo "  make electron-win        - Build electron for Windows"
-	@echo "  make electron-mac        - Build electron for macOS"
-	@echo "  make electron-postinstall- Install electron dependencies"
-	@echo "  make electron-start      - Start the electron application"
-	@echo "  make electron-build      - Build the electron application"
-	@echo "  make electron-build-dev  - Build the electron application in development mode"
-	@echo "  make electron-dev        - Start electron development environment"
-	@echo "  make electron-electron-dev - Start electron development server"
+# Define the default target
+default: help
 
+# Next.js tasks
+next_dev:
+	pnpm next dev --turbo
+
+next_build:
+	NODE_ENV=production pnpm next build
+
+next_start:
+	pnpm next start
+
+next_lint:
+	pnpm next lint
+
+# Formatting task
 format:
-	dprint fmt
+	pnpm dprint fmt
 
-electron:
-	pnpm --filter=./electron
+# Electron tasks
+postinstall:
+	pnpm electron-builder install-app-deps
 
-web:
-	pnpm --filter=./web
+electron_dist:
+	pnpm electron-builder --dir
 
-# Web scripts
-.PHONY: web-dev web-build web-start web-lint
+electron_dist_deb:
+	pnpm electron-builder --linux deb
 
-web-dev:
-	pnpm web dev
+electron_build:
+	pnpm tsup
 
-web-build:
-	pnpm web build
+electron_build_watch:
+	pnpm tsup --watch
 
-web-start:
-	pnpm web start
+electron_dev:
+	pnpm cross-env NODE_ENV='development' nodemon
 
-web-lint:
-	pnpm web lint
+# Composite tasks
+build:
+	make next_build && make electron_build
 
-# Electron scripts
-.PHONY: electron-clean electron-copy electron-prepare electron-dist electron-linux electron-win electron-mac electron-postinstall electron-start electron-build electron-build-dev electron-dev electron-electron-dev
+dist:
+	make next_build && make electron_dist
 
-electron-clean:
-	pnpm electron clean
+dev:
+	make next_dev & make electron_dev & make electron_build_watch
 
-electron-copy:
-	pnpm electron copy
-
-electron-prepare:
-	pnpm electron prepare
-
-electron-dist:
-	make web-build && pnpm electron dist
-
-electron-linux:
-	pnpm electron linux
-
-electron-win:
-	pnpm electron win
-
-electron-mac:
-	pnpm electron mac
-
-electron-postinstall:
-	pnpm electron postinstall
-
-electron-start:
-	pnpm electron start
-
-electron-build:
-	pnpm electron build
-
-electron-build-dev:
-	pnpm electron build:dev
-
-electron-dev:
-	pnpm electron dev
-
-electron-electron-dev:
-	pnpm electron electron:dev
+# Help task to list available tasks
+help:
+	@echo "Available tasks:"
+	@echo "  make next_dev           - Development server for Next.js"
+	@echo "  make next_build         - Build Next.js project"
+	@echo "  make next_start         - Start Next.js project"
+	@echo "  make next_lint          - Lint Next.js project"
+	@echo "  make format             - Format code"
+	@echo "  make postinstall        - Install app dependencies for Electron"
+	@echo "  make electron_dist      - Build Electron for distribution in directory mode"
+	@echo "  make electron_dist_deb  - Build Electron for Debian distribution"
+	@echo "  make electron_build     - Build Electron using tsup"
+	@echo "  make build              - Build both Next.js and Electron projects"
+	@echo "  make dist               - Distribute both Next.js and Electron projects"
+	@echo "  make dev                - Development mode for both Electron and Next.js"
+	@echo "  make electron_build_watch - Watch mode for Electron with tsup"
+	@echo "  make electron_dev       - Development mode for Electron"

@@ -1,24 +1,95 @@
 {
-  "name": "nextelectron",
+  "name": "nextjs_approuter_electron",
+  "version": "0.0.1",
   "private": true,
+  "homepage": "https://saybackend.com",
   "author": {
     "name": "spa5k",
     "email": "admin@saybackend.com",
     "url": "https://saybackend.com"
   },
-  "description": "NextElectron is a monorepo template for building Electron apps with Next.js.",
-  "version": "0.0.1",
+  "main": "build/main.js",
   "scripts": {
+    "next:dev": "next dev",
+    "next:build": "next build",
+    "next:start": "next start",
+    "next:lint": "next lint",
     "format": "dprint fmt",
-    "electron": "pnpm --filter=./electron",
-    "web": "pnpm --filter=./web"
+    "postinstall": "electron-builder install-app-deps",
+    "electron:dist": "electron-builder --dir",
+    "electron:dist:deb": "electron-builder --linux deb",
+    "electron:build": "tsup",
+    "build": "run-s next:build electron:build",
+    "dist": "run-s next:build electron:dist",
+    "dev": "npm-run-all --parallel electron:dev next:dev",
+    "electron:build_watch": "tsup --watch",
+    "electron:dev": "npm-run-all --parallel electron:build_watch electron:watch",
+    "electron:watch": "cross-env NODE_ENV='development' nodemon"
+  },
+  "dependencies": {
+    "@electron-toolkit/utils": "^3.0.0",
+    "@next/env": "^14.2.5",
+    "cross-env": "^7.0.3",
+    "get-port-please": "^3.1.2",
+    "next": "14.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "sharp": "^0.33.4"
   },
   "devDependencies": {
-    "dprint": "^0.47.1"
+    "@types/node": "^20.14.12",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "electron": "^31.3.0",
+    "electron-builder": "^24.13.3",
+    "eslint": "^8.5.7",
+    "eslint-config-next": "14.2.5",
+    "nodemon": "^3.1.4",
+    "npm-run-all": "^4.1.5",
+    "postcss": "^8.4.40",
+    "tailwindcss": "^3.4.6",
+    "tsup": "^8.2.3",
+    "typescript": "^5.5.4"
   },
-  "engines": {
-    "node": ">=18"
-  },
-  "dependencies": {},
-  "packageManager": "pnpm@9.5.0"
+  "build": {
+    "asar": true,
+    "executableName": "NextJSElectron",
+    "appId": "com.saybackend.nextjs-electron",
+    "asarUnpack": [
+      "node_modules/next",
+      "node_modules/@img",
+      "node_modules/sharp",
+      "**\\*.{node,dll}"
+    ],
+    "files": [
+      "build",
+      {
+        "from": ".next/standalone",
+        "to": "app",
+        "filter": [
+          "!**/.env",
+          "!**/package.json"
+        ]
+      },
+      {
+        "from": ".next/static",
+        "to": "app/.next/static"
+      },
+      {
+        "from": "public",
+        "to": "app/public"
+      }
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "linux": {
+      "target": [
+        "deb"
+      ],
+      "category": "Development"
+    }
+  }
 }

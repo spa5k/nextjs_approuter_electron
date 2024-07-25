@@ -1,13 +1,15 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-  entry: ["./src/main.ts", "./src/preload.ts"],
+  entry: ["./electron/src/main.ts", "./electron/src/preload.ts"],
+  splitting: false,
+  sourcemap: false,
   clean: true,
   cjsInterop: true,
   skipNodeModulesBundle: true,
   treeshake: true,
   outDir: "build",
   external: ["electron"],
-  format: ["cjs"], // Can't use esm, as electron doesn't support it
+  format: ["cjs"],
   bundle: true,
 });
