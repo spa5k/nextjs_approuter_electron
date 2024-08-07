@@ -9,6 +9,7 @@
     "url": "https://saybackend.com"
   },
   "main": "build/main.js",
+  "description": "NextJS App with Electron",
   "scripts": {
     "next:dev": "next dev",
     "next:build": "next build",
@@ -20,7 +21,7 @@
     "electron:dist:deb": "electron-builder --linux deb",
     "electron:build": "tsup",
     "build": "run-s next:build electron:build",
-    "dist": "run-s next:build electron:dist",
+    "dist": "run-s build electron:dist",
     "dev": "npm-run-all --parallel electron:dev next:dev",
     "electron:build_watch": "tsup --watch",
     "electron:dev": "npm-run-all --parallel electron:build_watch electron:watch",
@@ -37,18 +38,18 @@
     "sharp": "^0.33.4"
   },
   "devDependencies": {
-    "@types/node": "^20.14.12",
+    "@types/node": "^22.1.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "electron": "^31.3.0",
+    "electron": "^31.3.1",
     "electron-builder": "^24.13.3",
     "eslint": "^8.5.7",
     "eslint-config-next": "14.2.5",
     "nodemon": "^3.1.4",
     "npm-run-all": "^4.1.5",
-    "postcss": "^8.4.40",
-    "tailwindcss": "^3.4.6",
-    "tsup": "^8.2.3",
+    "postcss": "^8.4.41",
+    "tailwindcss": "^3.4.7",
+    "tsup": "^8.2.4",
     "typescript": "^5.5.4"
   },
   "build": {

@@ -1,6 +1,10 @@
 # NextJS App Router with Electron, SSR, Server Components, etc.
 
+![nextjsimage](https://raw.githubusercontent.com/spa5k/nextjs_approuter_electron/main/public/nextjs_electron.png)
+
 This boilerplate demonstrates a turborepo setup combining Next.js with Electron, allowing you to use the same codebase with SSR (Server-Side Rendering)/ React Server Components(RSC) for Electron applications.
+
+![nextjsimage](https://raw.githubusercontent.com/spa5k/nextjs_approuter_electron/main/public/app.png)
 
 ## Project Structure
 
