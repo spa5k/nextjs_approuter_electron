@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
-export function ElectronCheck(): JSX.Element {
+export function ElectronCheck(): React.JSX.Element {
   const [isElectron, setIsElectron] = useState(false);
   useEffect(() => {
     if (typeof window !== "undefined" && /Electron/.test(navigator.userAgent)) {

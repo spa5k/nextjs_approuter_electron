@@ -1,5 +1,6 @@
 import { is } from "@electron-toolkit/utils";
 import { app, BrowserWindow, ipcMain } from "electron";
+import { readFileSync } from "fs";
 import { getPort } from "get-port-please";
 import { startServer } from "next/dist/server/lib/start-server";
 import { join } from "path";
@@ -38,6 +39,11 @@ const startNextJSServer = async () => {
   try {
     const nextJSPort = await getPort({ portRange: [30_011, 50_000] });
     const webDir = join(app.getAppPath(), "app");
+
+    const configFilePath = join(webDir, ".next", "required-server-files.json");
+    const configFile = JSON.parse(readFileSync(configFilePath, "utf-8"));
+    const nextConfig = configFile.config;
+    process.env.__NEXT_PRIVATE_STANDALONE_CONFIG = JSON.stringify(nextConfig);
 
     await startServer({
       dir: webDir,

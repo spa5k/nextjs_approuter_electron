@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export const ServerPokemonComponent = async () => {
   const data = await fetch("https://pokeapi.co/api/v2/pokemon/ditto");
   const pokemon = await data.json();
@@ -18,7 +20,7 @@ export const ServerPokemonComponent = async () => {
       <p style={{ fontSize: "1.5em", color: "#333" }}>Server Component</p>
       <br />
       <h1 style={{ fontSize: "2.5em", color: "#d32f2f" }}>{pokemon.name}</h1>
-      <img
+      <Image
         src={pokemon.sprites.front_default}
         alt={pokemon.name}
         style={{ width: "150px", height: "150px", borderRadius: "50%" }}
