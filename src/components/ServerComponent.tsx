@@ -23,7 +23,9 @@ export const ServerPokemonComponent = async () => {
       <Image
         src={pokemon.sprites.front_default}
         alt={pokemon.name}
-        style={{ width: "150px", height: "150px", borderRadius: "50%" }}
+        width={150}
+        height={150}
+        style={{ borderRadius: "50%" }}
       />
     </div>
   );

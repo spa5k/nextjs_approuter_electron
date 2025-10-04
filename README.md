@@ -1,5 +1,7 @@
 # NextJS App Router with Electron, SSR, Server Components, etc.
 
+> [!IMPORTANT] > **This repository is no longer maintained** due to ethical concerns regarding Vercel's leadership. Users are advised to migrate to TanStack Start for continued support and development. A migration guide will be provided in the near future.
+
 ![nextjsimage](https://raw.githubusercontent.com/spa5k/nextjs_approuter_electron/main/public/nextjs_electron.png)
 
 This boilerplate demonstrates a turborepo setup combining Next.js with Electron, allowing you to use the same codebase with SSR (Server-Side Rendering)/ React Server Components(RSC) for Electron applications.
@@ -9,6 +11,7 @@ This boilerplate demonstrates a turborepo setup combining Next.js with Electron,
 ## Project Structure
 
 1. **Next.js App** - `next.config.mjs`
+
    - For the Next.js app, configure it by setting the output to "standalone":
      ```diff
      /** @type {import('next').NextConfig} */
@@ -20,6 +23,7 @@ This boilerplate demonstrates a turborepo setup combining Next.js with Electron,
    - This configuration produces a minimal bundle usable in Electron. Additionally, this output can be utilized in a Dockerfile to create a containerized version of your app, which is small in size and can run anywhere, not just Vercel.
 
 2. **Electron App** - `package.json`
+
    - The Electron app uses the Next.js app as the renderer, relying on stock Electron without external libraries.
    - Electron `build` configuration in `package.json`:
      ```json
@@ -67,6 +71,7 @@ This boilerplate demonstrates a turborepo setup combining Next.js with Electron,
      ```
    - The Next.js app output is copied to the Electron app to be used as the renderer during the build process.
    - Main Electron file (`main.ts`):
+
      ```ts
      import { is } from "@electron-toolkit/utils";
      import { app, BrowserWindow, ipcMain } from "electron";
@@ -140,6 +145,7 @@ This boilerplate demonstrates a turborepo setup combining Next.js with Electron,
        if (process.platform !== "darwin") app.quit();
      });
      ```
+
    - Unlike traditional Electron setups where `index.html` is loaded, this setup runs the Next.js app on a different port and loads it, enabling SSR in Electron.
    - `get-port-please` is used to get a free port, starting the Next.js server on that port. This allows the same codebase to be used for both web and Electron.
 
@@ -165,16 +171,19 @@ make electron_dist
 ### Next.js Tasks
 
 - **Development Server**: Starts the development server for Next.js.
+
   ```sh
   make next_dev
   ```
 
 - **Build**: Builds the Next.js project for production.
+
   ```sh
   make next_build
   ```
 
 - **Start**: Starts the Next.js project.
+
   ```sh
   make next_start
   ```
@@ -194,26 +203,31 @@ make electron_dist
 ### Electron Tasks
 
 - **Postinstall**: Installs app dependencies for Electron.
+
   ```sh
   make postinstall
   ```
 
 - **Build for Distribution**: Builds Electron for distribution in directory mode.
+
   ```sh
   make electron_dist
   ```
 
 - **Build for Debian Distribution**: Builds Electron for Debian distribution.
+
   ```sh
   make electron_dist_deb
   ```
 
 - **Build Using tsup**: Builds Electron using `tsup`.
+
   ```sh
   make electron_build
   ```
 
 - **Watch Mode**: Watch mode for Electron with `tsup`.
+
   ```sh
   make electron_build_watch
   ```
@@ -226,11 +240,13 @@ make electron_dist
 ### Composite Tasks
 
 - **Build All**: Builds both Next.js and Electron projects.
+
   ```sh
   make build
   ```
 
 - **Distribute All**: Distributes both Next.js and Electron projects.
+
   ```sh
   make dist
   ```
