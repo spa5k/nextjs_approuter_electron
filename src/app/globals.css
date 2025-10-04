@@ -1,6 +1,13 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@source "./src/pages/**/*.{js,ts,jsx,tsx,mdx}";
+@source "./src/components/**/*.{js,ts,jsx,tsx,mdx}";
+@source "./src/app/**/*.{js,ts,jsx,tsx,mdx}";
+
+@theme {
+  --gradient-radial: radial-gradient(var(--tw-gradient-stops));
+  --gradient-conic: conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops));
+}
 
 :root {
   --foreground-rgb: 0, 0, 0;

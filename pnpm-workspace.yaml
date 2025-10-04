@@ -1,0 +1,8 @@
+onlyBuiltDependencies:
+  - "@tailwindcss/oxide"
+  - dprint
+  - electron
+  - electron-winstaller
+  - esbuild
+  - sharp
+  - unrs-resolver
