@@ -1,6 +1,7 @@
 # NextJS App Router with Electron, SSR, Server Components, etc.
 
-> [!IMPORTANT] > **This repository is no longer maintained** due to ethical concerns regarding Vercel's leadership. Users are advised to migrate to TanStack Start for continued support and development. A migration guide will be provided in the near future.
+> [!CAUTION]
+> **This repository is no longer maintained** due to ethical concerns regarding Vercel's leadership. Users are advised to migrate to TanStack Start for continued support and development. A migration guide will be provided in the near future.
 
 ![nextjsimage](https://raw.githubusercontent.com/spa5k/nextjs_approuter_electron/main/public/nextjs_electron.png)
 
